@@ -38,8 +38,8 @@ public class IntQueueTest {
     @Before
     public void setUp() {
         // comment/uncomment these lines to test each class
-        mQueue = new LinkedIntQueue();
-    //    mQueue = new ArrayIntQueue();
+    //    mQueue = new LinkedIntQueue();
+        mQueue = new ArrayIntQueue();
 
         testList = new ArrayList<>(List.of(1, 2, 3));
     }
@@ -53,19 +53,21 @@ public class IntQueueTest {
     @Test
     public void testNotEmpty() {
         // TODO: write your own unit test
-        fail("Test not implemented");
+        mQueue.enqueue(1);
+        assertFalse(mQueue.isEmpty());
     }
 
     @Test
     public void testPeekEmptyQueue() {
         // TODO: write your own unit test
-        fail("Test not implemented");
+        assertNull(mQueue.peek());
     }
 
     @Test
     public void testPeekNoEmptyQueue() {
         // TODO: write your own unit test
-        fail("Test not implemented");
+        mQueue.enqueue(42);
+        assertEquals(Integer.valueOf(42), mQueue.peek());
     }
 
     @Test
@@ -81,7 +83,58 @@ public class IntQueueTest {
     @Test
     public void testDequeue() {
         // TODO: write your own unit test
-        fail("Test not implemented");
+        mQueue.enqueue(10);
+        mQueue.enqueue(20);
+        assertEquals(Integer.valueOf(10), mQueue.dequeue());
+        assertEquals(Integer.valueOf(20), mQueue.dequeue());
+        assertNull(mQueue.dequeue()); // Should return null for empty queue
+    }
+
+    /** Specification test: `clear()` should reset the queue */
+    @Test
+    public void testClear() {
+        mQueue.enqueue(5);
+        mQueue.enqueue(10);
+        mQueue.clear();
+        assertTrue(mQueue.isEmpty());
+        assertNull(mQueue.peek());
+        assertNull(mQueue.dequeue());
+    }
+
+    /** Structural test: `ArrayIntQueue` capacity expansion correctness */
+    @Test
+    public void testEnsureCapacity() {
+        mQueue = new ArrayIntQueue(); // Ensure this test only runs for ArrayIntQueue
+
+        for (int i = 0; i < 15; i++) { // Exceeds default capacity (10)
+            mQueue.enqueue(i);
+        }
+        assertEquals(Integer.valueOf(0), mQueue.peek()); // Ensure queue order is maintained
+        assertEquals(15, mQueue.size());
+    }
+
+    @Test
+    public void testEnsureCapacityWithWrappedHead() {
+        mQueue = new ArrayIntQueue();
+
+        // Fill the queue
+        for (int i = 0; i < 10; i++) {
+            mQueue.enqueue(i);
+        }
+
+        // Dequeue 5 elements
+        for (int i = 0; i < 5; i++) {
+            mQueue.dequeue();
+        }
+
+        // Enqueue 10 more elements
+        for (int i = 10; i < 20; i++) {
+            mQueue.enqueue(i);
+        }
+
+        // Ensure queue order is maintained
+        assertEquals(15, mQueue.size()); // 10 elements enqueued, 5 dequeued
+        assertEquals(Integer.valueOf(5), mQueue.peek()); // Head should be 5
     }
 
     @Test
